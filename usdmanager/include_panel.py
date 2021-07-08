@@ -15,9 +15,9 @@
 #
 import os
 
-from Qt import QtCore, QtWidgets
-from Qt.QtCore import Signal, Slot
-from Qt.QtGui import QIcon
+from PySide2 import QtCore, QtWidgets
+from PySide2.QtCore import Signal, Slot
+from PySide2.QtGui import QIcon
 
 from .utils import expandPath, overrideCursor
 

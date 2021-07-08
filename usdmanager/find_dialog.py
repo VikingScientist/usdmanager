@@ -13,20 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from Qt.QtCore import Slot
-from Qt.QtWidgets import QStatusBar
-from Qt.QtGui import QIcon
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QStatusBar
+from PySide2.QtGui import QIcon
 
-from .utils import loadUiType
+from PySide2.QtWidgets import QDialog
 
-try:
-    UI_TYPE = loadUiType("find_dialog.ui")
-except KeyError:
-    # Building docs, have a safe fallback
-    from Qt.QtWidgets import QDialog
-    UI_TYPE = QDialog
-
-class FindDialog(UI_TYPE):
+class FindDialog(QDialog):
     """
     Find/Replace dialog
     """

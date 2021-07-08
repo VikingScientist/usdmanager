@@ -58,14 +58,14 @@ from pkg_resources import resource_filename
 #if "QT_PREFERRED_BINDING" not in os.environ:
 #    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt5", "PySide2", "PyQt4", "PySide"])
 
-import Qt
-from Qt import QtCore, QtGui, QtWidgets
-from Qt.QtCore import Signal, Slot
+# import Qt
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import Signal, Slot
 
 # Qt.py versions before 1.1.0 may not support this.
 QtPrintSupport = None
 try:
-    from Qt import QtPrintSupport
+    from PySide2 import QtPrintSupport
 except ImportError:
     pass
 
@@ -81,7 +81,7 @@ from .include_panel import IncludePanel
 from .parser import FileParser, AbstractExtParser
 from .plugins import images_rc as plugins_rc
 from .plugins import Plugin
-from .preferences_dialog import PreferencesDialog
+from .preferences import PreferencesDialog
 
 
 # Set up logging.
@@ -90,14 +90,16 @@ logging.basicConfig()
 
 
 # Qt.py compatibility: HACK for missing QUrl.path in PySide2 build.
-if Qt.IsPySide2 and not hasattr(QtCore.QUrl, "path"):
-    def qUrlPath(self):
-        return self.toString(QtCore.QUrl.PrettyDecoded | QtCore.QUrl.RemoveQuery)
-    
-    QtCore.QUrl.path = qUrlPath
+# if Qt.IsPySide2 and not hasattr(QtCore.QUrl, "path"):
+#     def qUrlPath(self):
+#         return self.toString(QtCore.QUrl.PrettyDecoded | QtCore.QUrl.RemoveQuery)
+#     
+#     QtCore.QUrl.path = qUrlPath
 
 
-class UsdMngrWindow(QtWidgets.QMainWindow):
+from usdmanager.main_window import Ui_MainWindow
+
+class UsdMngrWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     """
     File Browser/Text Editor for quick navigation and editing among text-based files that reference other files.
     Normal links are colored blue (USD Crate files are a different shade of blue). The linked file exists.
@@ -233,8 +235,9 @@ class UsdMngrWindow(QtWidgets.QMainWindow):
     def setupUi(self):
         """ Create and lay out the widgets defined in the ui file, then add additional modifications to the UI.
         """
-        self.baseInstance = utils.loadUiWidget('main_window.ui', self)
-        
+        # self.baseInstance = utils.loadUiWidget('main_window.ui', self)
+        super().setupUi(self)
+
         # You now have access to the widgets defined in the ui file.
         # Update some app defaults that required the GUI to be created first.
         defaultDocFont = QtGui.QFont()
@@ -479,14 +482,6 @@ a.binary {{color:#69F}}
         
         self.toggleInclude(self.preferences['includeVisible'])
         
-        # OS-specific hacks.
-        # QSysInfo doesn't have productType until Qt5.
-        if (Qt.IsPySide2 or Qt.IsPyQt5) and QtCore.QSysInfo.productType() in ["osx", "macos"]:
-            self.buttonTabList.setIcon(ft("1downarrow1"))
-            
-            # OSX likes to add its own Enter/Exit Full Screen item, not recognizing we already have one.
-            self.actionFullScreen.setEnabled(False)
-            self.menuView.removeAction(self.actionFullScreen)
     
     def createHighlighter(self, highlighterClass):
         """ Create a language-specific master highlighter to be used for any file of that language.
@@ -4510,12 +4505,11 @@ class App(QtCore.QObject):
         
         # Initialize the application and settings.
         self._set_log_level()
-        logger.debug("Qt version: %s %s", Qt.__binding__, Qt.__binding_version__)
+        # logger.debug("Qt version: %s %s", Qt.__binding__, Qt.__binding_version__)
         self.app = QtWidgets.QApplication(sys.argv)
         self.app.setApplicationName(self.appName)
         self.app.setWindowIcon(QtGui.QIcon(":images/images/logo.png"))
-        if Qt.IsPySide2 or Qt.IsPyQt5:
-            self.app.setApplicationDisplayName(self.appDisplayName)
+        self.app.setApplicationDisplayName(self.appDisplayName)
         self.app.setOrganizationName("USD")
         self.app.lastWindowClosed.connect(self.onExit)
         

@@ -20,7 +20,7 @@ Custom syntax highlighters.
 import inspect
 import re
 
-from Qt import QtCore, QtGui
+from PySide2 import QtCore, QtGui
 
 from .constants import LINE_CHAR_LIMIT
 from .utils import findModules

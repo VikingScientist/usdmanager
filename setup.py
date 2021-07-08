@@ -17,11 +17,12 @@ from __future__ import absolute_import, division, print_function
 
 from setuptools import setup, find_packages
 from glob import glob
+from usdmanager import version
 
 
 PACKAGE = "usdmanager"
-execfile("{}/version.py".format(PACKAGE))
-VERSION = __version__
+# execfile(f"{PACKAGE}/version.py")
+VERSION = version.__version__
 
 
 setup(
@@ -40,8 +41,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Natural Language :: English",
         "Operating System :: POSIX",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
     ],
     packages=find_packages(),
@@ -64,7 +64,7 @@ setup(
     data_files=[("usdmanager", ["usdmanager/usdviewstyle.qss"])],
     scripts=glob("scripts/*"),
     install_requires=[
-        "Qt.py>=1.1",
+        "PySide2>=5.15",
         "setuptools",  # For pkg_resources
     ],
     setup_requires=[

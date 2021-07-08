@@ -26,14 +26,7 @@ from contextlib import contextmanager
 from glob import glob
 from pkg_resources import resource_filename
 
-import Qt
-from Qt import QtCore, QtWidgets
-if Qt.IsPySide:
-    import pysideuic as uic
-elif Qt.IsPySide2:
-    import pyside2uic as uic
-else:
-    uic = Qt._uic
+from PySide2 import QtCore, QtWidgets
 
 from .constants import USD_EXTS
 
@@ -121,10 +114,7 @@ def expandUrl(path, parentPath=None):
         query = None
     url = QtCore.QUrl.fromLocalFile(os.path.abspath(expandPath(path, parentPath, sdf_format_args)))
     if query:
-        if Qt.IsPySide2 or Qt.IsPyQt5:
-            url.setQuery(query)
-        else:
-            url.setQueryItems([x.split("=", 1) for x in query.split("&")])
+        url.setQuery(query)
     return url
 
 
@@ -154,10 +144,7 @@ def strToUrl(path):
         url = QtCore.QUrl.fromLocalFile(path)
     
     if query:
-        if Qt.IsPySide2 or Qt.IsPyQt5:
-            url.setQuery(query)
-        else:
-            url.setQueryItems([x.split("=", 1) for x in query.split("&")])
+        url.setQuery(query)
     return url
 
 
@@ -406,58 +393,6 @@ def isUsdFile(path):
     return isUsdExt(os.path.splitext(path)[1])
 
 
-def loadUiType(uiFile, sourceFile=None, className="DefaultWidgetClass"):
-    """ Used to define a custom widget's class.
-    
-    :Parameters:
-        uiFile : `str`
-            UI file path. Can be relative if loading from the same directory as sourceFile.
-        sourceFile : `str`
-            File path of loading module.
-            Used to help find embedded resources and to find uiFile when the file path is relative.
-        className : `str`
-            Class name
-    :Returns:
-        Class type
-    :Rtype:
-        `type`
-    """
-    import sys
-    import xml.etree.ElementTree as xml
-    from StringIO import StringIO
-    from Qt import QtWidgets
-    
-    if not os.path.exists(uiFile) and not os.path.isabs(uiFile):
-        if sourceFile is None:
-            uiFile = resource_filename(__name__, uiFile)
-            sourceDir = os.path.dirname(uiFile)
-        else:
-            sourceDir = os.path.dirname(sourceFile)
-            uiFile = os.path.join(sourceDir, uiFile)
-    else:
-        sourceDir = os.path.dirname(uiFile)
-    
-    # Search for resources in this tool's directory.
-    if sourceDir not in sys.path:
-        sys.path.insert(0, sourceDir)
-    
-    parsed = xml.parse(uiFile)
-    widget_class = parsed.find('widget').get('class')
-    form_class = parsed.find('class').text
-    
-    with open(uiFile) as f:
-        o = StringIO()
-        frame = {}
-        uic.compileUi(f, o, indent=0)
-        pyc = compile(o.getvalue(), "<string>", "exec")
-        exec pyc in frame
-        
-        # Fetch the base_class and form class based on their type.
-        form_class = frame["Ui_{}".format(form_class)]
-        base_class = eval("QtWidgets.{}".format(widget_class))
-    return type("{}Base".format(className), (form_class, base_class), {})
-
-
 def loadUiWidget(path, parent=None, source_path=None):
     """ Load a Qt Designer .ui file and return an instance of the user interface
     
@@ -473,7 +408,7 @@ def loadUiWidget(path, parent=None, source_path=None):
     :Rtype:
         `QtWidgets.QWidget`
     """
-    from Qt import QtCompat
+    from PySide2.QUiTools import QUiLoader
     
     if not os.path.exists(path) and not os.path.isabs(path):
         # Assume the .ui file lives in this directory.
@@ -481,7 +416,7 @@ def loadUiWidget(path, parent=None, source_path=None):
             path = resource_filename(__name__, path)
         else:
             path = os.path.join(os.path.dirname(os.path.realpath(source_path)), path)
-    ui = QtCompat.loadUi(path, parent)
+    ui = QUiLoader.load(path, parent)
     if parent:
         #ui.setParent(parent)
         for member in dir(ui):
@@ -499,7 +434,7 @@ def overrideCursor(cursor=QtCore.Qt.WaitCursor):
         with overrideCursor():
             # do something that may raise an error
     """
-    from Qt.QtWidgets import QApplication
+    from PySide2.QtWidgets import QApplication
     
     QApplication.setOverrideCursor(cursor)
     try:

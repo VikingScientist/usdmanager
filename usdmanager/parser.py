@@ -22,7 +22,7 @@ import re
 from cgi import escape
 from collections import defaultdict
 
-from Qt.QtCore import QFile, QFileInfo, QObject, Signal, Slot
+from PySide2.QtCore import QFile, QFileInfo, QObject, Signal, Slot
 
 from .constants import LINE_CHAR_LIMIT, CHAR_LIMIT, FILE_FORMAT_NONE, HTML_BODY
 from .utils import expandPath

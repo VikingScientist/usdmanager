@@ -15,8 +15,8 @@
 #
 import logging
 
-from Qt.QtCore import QFileInfo, QUrl
-from Qt.QtGui import QIcon
+from PySide2.QtCore import QFileInfo, QUrl
+from PySide2.QtGui import QIcon
 
 
 # Set up logging.

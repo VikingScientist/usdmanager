@@ -17,9 +17,9 @@
 Line numbers widget for optimized display of line numbers on the left side of
 a text widget.
 """
-from Qt.QtCore import Slot
-from Qt.QtWidgets import QFrame, QWidget
-from Qt.QtGui import QFont, QPainter, QTextCharFormat
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QFrame, QWidget
+from PySide2.QtGui import QFont, QPainter, QTextCharFormat
 
 
 class LineNumbers(QWidget):

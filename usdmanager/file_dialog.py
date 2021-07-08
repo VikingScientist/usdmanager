@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from Qt.QtCore import QDir
-from Qt.QtWidgets import QFileDialog
+from PySide2.QtCore import QDir
+from PySide2.QtWidgets import QFileDialog
 
 from .constants import FILE_FILTER
 
